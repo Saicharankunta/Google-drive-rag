@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en" style="color-scheme: light only;">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=1280">
+    <meta name="color-scheme" content="light only">
+    <meta name="supported-color-schemes" content="light">
+    <title>drive-rag · Knowledge Studio</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+
+    <link rel="stylesheet" href="/static/style.css">
+
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/dompurify@3/dist/purify.min.js"></script>
+</head>
+<body>
+    <div class="app">
+        <header class="hero">
+            <div class="orb"></div>
+            <div class="hero-text">
+                <h1>Drive <em>RAG</em></h1>
+                <div class="hero-sub" id="hero-sub">DRIVE-RAG · QWEN · CHROMADB · LOCAL</div>
+            </div>
+            <div class="status-indicator" id="status-indicator">
+                <span class="status-dot"></span>
+                <span class="status-text">IDLE</span>
+            </div>
+        </header>
+
+        <nav class="tabs">
+            <button class="tab active" data-tab="query">Query</button>
+            <button class="tab" data-tab="index">Index</button>
+            <button class="tab" data-tab="status">Status</button>
+        </nav>
+
+        <!-- Query -->
+        <section class="pane active" data-pane="query">
+            <div class="model-pill">
+                <span class="pill-dot"></span>
+                <span id="model-pill-text">MODEL · RETRIEVAL · GENERATION</span>
+            </div>
+
+            <div class="two-col">
+                <div class="col col-input">
+                    <h2 class="section-title">Ask</h2>
+                    <p class="section-desc">Ask a question over your indexed Google Drive documents. Answers are grounded in retrieved chunks.</p>
+
+                    <div class="field">
+                        <label>Question</label>
+                        <textarea id="query-question" rows="6" placeholder="What are the key points in my project notes?"></textarea>
+                    </div>
+
+                    <div class="field">
+                        <label>Top-k chunks</label>
+                        <div class="slider-row">
+                            <span class="slider-label">Retrieve</span>
+                            <input type="range" id="query-top-k" min="1" max="10" step="1" value="5">
+                            <span class="slider-val" id="query-top-k-val">5</span>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-primary btn-lg" id="query-submit">
+                        <span class="btn-label">Ask</span>
+                    </button>
+                </div>
+
+                <div class="col col-output">
+                    <h2 class="section-title">Answer</h2>
+                    <div class="output-empty" id="query-empty">
+                        <div class="empty-icon">◎</div>
+                        <div class="empty-text">Answers and sources will appear here</div>
+                    </div>
+                    <div id="query-output" class="output-list hidden"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Index -->
+        <section class="pane" data-pane="index">
+            <div class="model-pill">
+                <span class="pill-dot"></span>
+                <span>PIPELINE · DRIVE → EMBED → CHROMADB</span>
+            </div>
+
+            <div class="two-col">
+                <div class="col col-input">
+                    <h2 class="section-title">Sync</h2>
+                    <p class="section-desc">Fetch documents from Google Drive, chunk them, embed with Ollama, and store in ChromaDB.</p>
+
+                    <div class="stat-grid">
+                        <div class="stat-card">
+                            <div class="stat-label">Indexed chunks</div>
+                            <div class="stat-value" id="index-chunk-count">—</div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-label">Drive auth</div>
+                            <div class="stat-value" id="index-auth-status">—</div>
+                        </div>
+                    </div>
+
+                    <div class="info-box" id="index-hint">
+                        Run <code>python main.py auth</code> once in the terminal if Drive is not authenticated yet.
+                    </div>
+
+                    <button class="btn btn-primary btn-lg" id="index-start">
+                        <span class="btn-label">Index Drive</span>
+                    </button>
+                </div>
+
+                <div class="col col-output">
+                    <h2 class="section-title">Progress</h2>
+                    <div class="output-empty" id="index-empty">
+                        <div class="empty-icon">↻</div>
+                        <div class="empty-text">Index results will appear here</div>
+                    </div>
+                    <div id="index-output" class="output-list hidden"></div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Status -->
+        <section class="pane" data-pane="status">
+            <div class="two-col single-col">
+                <div class="col">
+                    <h2 class="section-title">Configuration</h2>
+                    <p class="section-desc">Current runtime settings loaded from your <code>.env</code> file.</p>
+
+                    <div class="config-list" id="config-list"></div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer">
+            <span>drive-rag · chromadb · ollama · groq</span>
+            <span class="footer-right">
+                <span class="footer-dot"></span>
+                <span id="footer-status">ready</span>
+            </span>
+        </footer>
+    </div>
+
+    <div id="toast-container"></div>
+    <script src="/static/app.js"></script>
+</body>
+</html>
